@@ -24,6 +24,7 @@ def shapley_value(player_index: int,
         float: The Shapley value of the specified player.
     """
     num_players = len(players)
+    assert player_index < num_players, f"player_index out of range. Must be in [0, {num_players - 1}]"
     all_player_indices = set(range(num_players))
     total_value = 0.0
     for coalition in coalitions(all_player_indices - {player_index}):
