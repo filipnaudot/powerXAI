@@ -99,3 +99,50 @@ def majority_value(players, coalition)  -> float:
         float: 1.0 if the majority of the players are present.
     """
     return 1.0 if len(coalition) >= (len(players) // 2) else 0.0
+
+
+def owen_three_person_game_example(players, coalition)  -> float:
+    """
+    Value function used in the first example in:
+    Owen, VALUES OF GAMES WITH APRIORI UNIONS.
+
+    Args:
+        players (List[Any]): List of players or elements in the reference set.
+        coalition (Set[int]): Indices of players whose coalition value is computed.
+
+    Returns:
+        float
+    """
+    flattened_players = [player for group in players for player in group]
+    coalition_labels = {flattened_players[i] for i in coalition}
+
+    if   coalition_labels       == set():            return 0.0
+    elif len(coalition_labels)  == 1:                return 0.0
+    elif {"B", "C"}             == coalition_labels: return 0.0
+    elif {"A", "B"}             == coalition_labels: return 80.0
+    elif {"A", "C"}             == coalition_labels: return 100.0
+    return 100.0 # {"A", "B", "C"}
+
+
+def owen_four_person_game_example(players, coalition)  -> float:
+    """
+    Value function used in the second example in:
+    Owen, VALUES OF GAMES WITH APRIORI UNIONS.
+
+    Args:
+        players (List[Any]): List of players or elements in the reference set.
+        coalition (Set[int]): Indices of players whose coalition value is computed.
+
+    Returns:
+        float
+    """
+    flattened_players = [player for group in players for player in group]
+    coalition_labels = {flattened_players[i] for i in coalition}
+
+    if   coalition_labels       == set():            return 0.0
+    elif len(coalition_labels)  == 1:                return 0.0
+    elif {"A", "B"}             == coalition_labels: return 50.0
+    elif {"A", "C"}             == coalition_labels: return 60.0
+    elif {"A", "D"}             == coalition_labels: return 70.0
+    elif {"A", "B", "C", "D"}   == coalition_labels: return 100.0
+    return 100 - owen_four_person_game_example(players=players, coalition=({0,1,2,3} - coalition))

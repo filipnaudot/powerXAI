@@ -1,4 +1,4 @@
-from typing import Callable, Any, Union, Optional
+from typing import Callable, Iterable, Any, Union, Optional
 
 
 # ------------------------------------------------------------------ #
