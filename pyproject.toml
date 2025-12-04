@@ -43,6 +43,7 @@ docs = [
   "sphinx",
   "sphinx-book-theme",
   "sphinx-design",
+  "matplotlib",
 ]
 
 ###
