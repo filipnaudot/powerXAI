@@ -1,5 +1,11 @@
-# powerXAI
-Power Indices for Explainable AI
+<div align="center">
+  <img src="docs/_static/logo-powerxai.png" alt="powerXAI logo" width="140">
+</div>
+<div align="center">
+  Power Indices for Explainable AI
+</div>
+
+
 
 ## Getting Started
 
