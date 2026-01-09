@@ -34,8 +34,8 @@ html_theme_options = {
     "use_fullscreen_button": False,
 
     "logo": {
-        # "image_light": "...",
-        # "image_dark": "...",
+        "image_light": "_static/logo-powerxai.png",
+        "image_dark": "_static/logo-powerxai.png",
         "text": "powerXAI",
         "alt_text": "powerXAI documentation",
     }
