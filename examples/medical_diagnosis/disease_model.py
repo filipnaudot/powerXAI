@@ -1,6 +1,6 @@
 import numpy as np
 
-class FluDiagnosisModel:
+class DiseaseClassificationModel:
     """
     Mock ML model for multi-class disease classification based on symptoms.
     
@@ -162,9 +162,9 @@ class FluDiagnosisModel:
 
 
 if __name__ == "__main__":
-    print("=== Flu Diagnosis Model Demo ===\n")
+    print("=== Disease Diagnosis Model Demo ===\n")
 
-    model = FluDiagnosisModel()
+    model = DiseaseClassificationModel()
     test_cases = [
         ([0, 0, 0, 0, 0, 0], "No symptoms"),
         ([1, 1, 0, 0, 0, 0], "Fever + Cough"),
@@ -195,7 +195,6 @@ if __name__ == "__main__":
         return probs[target_class]
     
     print("\n\n=== Value Function Examples (for Power Indices) ===\n")
-    print("Flu probability with different symptom combinations:")
     print(f"  {{fever, cough}}: {value_function(model, [0, 1]):.3f}")
     print(f"  {{fever}}: {value_function(model, [0]):.3f}")
     print(f"  {{cough}}: {value_function(model, [1]):.3f}")
