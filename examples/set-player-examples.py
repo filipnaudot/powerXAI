@@ -47,4 +47,3 @@ ax_upsilon.grid(axis="y", linestyle=":", alpha=0.4)
 
 plt.tight_layout()
 plt.savefig("./plots/shapley_vs_upsilon.png", dpi=300, bbox_inches="tight")
-plt.show()
