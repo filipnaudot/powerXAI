@@ -21,7 +21,7 @@ def shapley_weighted_coalitions(player_index: int,
     """
     result: list[tuple[set[int], float]] = []
     num_players = len(player_indices)
-    for coalition in coalitions(player_indices  - {player_index}):
+    for coalition in coalitions(player_indices - {player_index}):
         size_coalition = len(coalition)
         weight = factorial(size_coalition) * factorial(num_players - size_coalition - 1) / factorial(num_players)
         result.append((coalition, weight))
