@@ -4,6 +4,9 @@
 <div align="center">
   Power Indices for Explainable AI
 </div>
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue" alt="Supported Python versions: 3.10 to 3.14">
+</div>
 
 
 
@@ -23,6 +26,8 @@ Install the project in editable mode:
 ```bash
 pip install -e .
 ```
+
+Supported Python versions: `3.10` to `3.14`.
 
 Try a minimal example:
 
