@@ -27,8 +27,6 @@ Install the project in editable mode:
 pip install -e .
 ```
 
-Supported Python versions: `3.10` to `3.14`.
-
 Try a minimal example:
 
 ```python
