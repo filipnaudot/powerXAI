@@ -71,43 +71,24 @@ class FraudDetectionModel:
             raise ValueError(f"Expected {self.num_features} features, got {len(indicators)}")
 
         location, foreign_ip, vpn_detected, high_amount, velocity_spike, odd_hour = indicators
-
         device_risk = location + foreign_ip + vpn_detected
         transaction_risk = high_amount + velocity_spike + odd_hour
         total_risk = device_risk + transaction_risk
 
+        ### Simulate naural network
         legitimate_score = self._compute_legitimate_score(total_risk, device_risk, transaction_risk)
-        review_score = self._compute_review_score(
-            device_risk=device_risk,
-            transaction_risk=transaction_risk,
-            total_risk=total_risk,
-            high_amount=high_amount,
-            velocity_spike=velocity_spike,
-            odd_hour=odd_hour,
-        )
-        fraud_score = self._compute_fraud_score(
-            device_risk=device_risk,
-            transaction_risk=transaction_risk,
-            total_risk=total_risk,
-            high_amount=high_amount,
-            velocity_spike=velocity_spike,
-            odd_hour=odd_hour,
-        )
-        account_takeover_score = self._compute_account_takeover_score(
-            device_risk=device_risk,
-            transaction_risk=transaction_risk,
-            total_risk=total_risk,
-            location=location,
-            foreign_ip=foreign_ip,
-            vpn_detected=vpn_detected,
-        )
-
-        scores = np.array([
-            legitimate_score,
-            review_score,
-            fraud_score,
-            account_takeover_score,
-        ])
+        review_score = self._compute_review_score(device_risk=device_risk, transaction_risk=transaction_risk, 
+                                                  total_risk=total_risk, high_amount=high_amount, 
+                                                  velocity_spike=velocity_spike, odd_hour=odd_hour,)
+        fraud_score = self._compute_fraud_score(device_risk=device_risk, transaction_risk=transaction_risk,
+                                                total_risk=total_risk, high_amount=high_amount,
+                                                velocity_spike=velocity_spike, odd_hour=odd_hour,)
+        account_takeover_score = self._compute_account_takeover_score(device_risk=device_risk, transaction_risk=transaction_risk,
+                                                                      total_risk=total_risk, location=location,
+                                                                      foreign_ip=foreign_ip, vpn_detected=vpn_detected,)
+        scores = np.array([legitimate_score, review_score, fraud_score, account_takeover_score,])
+        
+        ### Apply softmax
         probabilities = self._softmax(scores)
         max_index = np.argmax(probabilities)
         return ClassificationResult(predicted_class=self.class_names[max_index],
@@ -119,8 +100,7 @@ class FraudDetectionModel:
     def print_prediction(self, indicators, description=""):
         """Classify and pretty-print a transaction risk prediction."""
         result = self.classify(indicators)
-        if description:
-            print(f"\n{description}")
+        if description: print(f"\n{description}")
         print(f"Indicators: {indicators}")
         active_indicators = [self.feature_names[i] for i, x in enumerate(indicators) if x == 1]
         print(f"Active: {', '.join(active_indicators) if active_indicators else 'none'}")
@@ -188,7 +168,7 @@ if __name__ == "__main__":
         ([1, 1, 1, 1, 1, 1], "All signals active"),
     ]
 
-    for indicators, description in test_cases:
+    for indicators, description in test_cases: 
         model.print_prediction(indicators, description)
 
     def value_function(model, feature_indices, target_class=2):
