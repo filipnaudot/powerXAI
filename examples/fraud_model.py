@@ -43,11 +43,13 @@ class FraudDetectionModel:
     NUM_FEATURES = len(FEATURE_NAMES)
     NUM_CLASSES = len(CLASS_NAMES)
 
+
     def __init__(self):
         self.feature_names = self.FEATURE_NAMES
         self.class_names = self.CLASS_NAMES
         self.num_features = self.NUM_FEATURES
         self.num_classes = self.NUM_CLASSES
+
 
     def classify(self, indicators, PRINT: bool = True):
         """
@@ -108,12 +110,11 @@ class FraudDetectionModel:
         ])
         probabilities = self._softmax(scores)
         max_index = np.argmax(probabilities)
-        return ClassificationResult(
-            predicted_class=self.class_names[max_index],
-            predicted_prob=float(probabilities[max_index]),
-            class_names=self.class_names,
-            probabilities=probabilities,
-        )
+        return ClassificationResult(predicted_class=self.class_names[max_index],
+                                    predicted_prob=float(probabilities[max_index]),
+                                    class_names=self.class_names,
+                                    probabilities=probabilities,)
+
 
     def print_prediction(self, indicators, description=""):
         """Classify and pretty-print a transaction risk prediction."""
@@ -129,22 +130,20 @@ class FraudDetectionModel:
             highlight = " ← PREDICTED" if class_name == result.predicted_class else ""
             print(f"  {class_name:16s}: {probability:.3f} {bar}{highlight}")
 
+
     def _softmax(self, scores):
         exp_scores = np.exp(scores - np.max(scores))
         return exp_scores / np.sum(exp_scores)
 
+
     def _compute_legitimate_score(self, total_risk, device_risk, transaction_risk):
         return 5.5 - 2.8 * total_risk - 0.7 * device_risk * transaction_risk
 
+
     def _compute_review_score(self, device_risk, transaction_risk, total_risk, high_amount, velocity_spike, odd_hour):
-        return (
-            -0.5
-            + 0.9 * total_risk
-            + 0.8 * (device_risk > 0) * (transaction_risk > 0)
-            + 0.6 * high_amount * odd_hour
-            + 0.6 * velocity_spike * odd_hour
-            - 0.8 * (total_risk > 4)
-        )
+        return (-0.5 + 0.9 * total_risk + 0.8 * (device_risk > 0) * (transaction_risk > 0)
+                + 0.6 * high_amount * odd_hour + 0.6 * velocity_spike * odd_hour - 0.8 * (total_risk > 4))
+
 
     def _compute_fraud_score(self, device_risk, transaction_risk, total_risk, high_amount, velocity_spike, odd_hour):
         return (
@@ -157,6 +156,7 @@ class FraudDetectionModel:
             + 1.0 * velocity_spike * odd_hour
             + 0.8 * (total_risk > 4)
         )
+
 
     def _compute_account_takeover_score(self, device_risk, transaction_risk, total_risk, location, foreign_ip, vpn_detected):
         # Treat the three device/network indicators as a nearly symmetric
@@ -171,6 +171,8 @@ class FraudDetectionModel:
             + 5.0 * location * foreign_ip * vpn_detected
             + 0.35 * (total_risk > 3)
         )
+
+
 
 
 if __name__ == "__main__":
