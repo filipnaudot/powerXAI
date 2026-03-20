@@ -1,4 +1,26 @@
+from dataclasses import dataclass
+
 import numpy as np
+
+
+@dataclass(frozen=True)
+class ClassificationResult:
+    predicted_class: str
+    predicted_prob: float
+    class_names: list[str]
+    probabilities: np.ndarray
+
+    def probability_of(self, class_name: str) -> float:
+        if class_name not in self.class_names:
+            raise ValueError(f"Unknown class: {class_name}")
+        return float(self.probabilities[self.class_names.index(class_name)])
+
+    @property
+    def probability_by_class(self) -> dict[str, float]:
+        return {class_name: float(probability)
+                for class_name, probability in zip(self.class_names, self.probabilities)}
+
+
 
 class DiseaseClassificationModel:
     """
@@ -43,14 +65,8 @@ class DiseaseClassificationModel:
         
         Returns:
         --------
-        predicted_class : str
-            Name of the class with the highest probability.
-        predicted_prob : float
-            Probability of the predicted class.
-        class_names : list of str
-            Names of the classes in a fixed order (see CLASS_NAMES above).
-        probs : numpy array, shape (4,)
-            Probability distribution over disease classes (sums to 1 and aligned w/ CLASS_NAMES).
+        ClassificationResult
+            Structured prediction result with named fields and helper accessors.
         """
         symptoms = np.array(symptoms, dtype=float)
         if len(symptoms) != self.num_features:
@@ -64,7 +80,10 @@ class DiseaseClassificationModel:
         scores = np.array([flu_score, cold_score, covid_score, healthy_score])
         probs = self._softmax(scores)
         max_index = np.argmax(probs)
-        return self.class_names[max_index], probs[max_index], self.class_names, probs
+        return ClassificationResult(predicted_class=self.class_names[max_index],
+                                    predicted_prob=float(probs[max_index]),
+                                    class_names=self.class_names,
+                                    probabilities=probs,)
     
 
     def print_prediction(self, symptoms, description=""):
@@ -78,15 +97,15 @@ class DiseaseClassificationModel:
         description : str, optional
             Description to print before prediction
         """
-        prediction, prediction_prob, class_names, probs = self.classify(symptoms)
+        result = self.classify(symptoms)
         if description: print(f"\n{description}")
         print(f"Symptoms: {symptoms}")
         active_symptoms = [self.feature_names[i] for i, s in enumerate(symptoms) if s == 1]
         print(f"Active: {', '.join(active_symptoms) if active_symptoms else 'none'}")
         print("\nPredictions:")
-        for class_name, prob in zip(class_names, probs):
+        for class_name, prob in zip(result.class_names, result.probabilities):
             bar = '█' * int(prob * 50)
-            highlight = ' ← PREDICTED' if prob == max(probs) else ''
+            highlight = ' ← PREDICTED' if class_name == result.predicted_class else ''
             print(f"  {class_name:8s}: {prob:.3f} {bar}{highlight}")
     
 
@@ -191,8 +210,8 @@ if __name__ == "__main__":
         for index in feature_indices:
             if index < 0 or index >= model.NUM_FEATURES: raise ValueError(f"Feature index {index} out of range [0, {model.NUM_FEATURES - 1}]")
             symptoms[index] = 1
-        prediction, prediction_prob, class_names, probs = model.classify(symptoms)
-        return probs[target_class]
+        result = model.classify(symptoms)
+        return float(result.probabilities[target_class])
     
     print("\n\n=== Value Function Examples (for Power Indices) ===\n")
     print(f"  {{fever, cough}}: {value_function(model, [0, 1]):.3f}")
