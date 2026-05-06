@@ -24,7 +24,7 @@ The library currently implements the following indices and attribution measures:
 | Cardinality counterfactual value | No | No | Yes |
 
 > [!NOTE]
-> For set of players, the library treats each set or group as one player. `owen_value` is the special case that works with an explicit grouping of players, while still returning values for individual players.
+> For sets of players, the library treats each set or group as one player. The returned values are defined at the level chosen by the user through the structure of `players`. `owen_value` is the special case where players are organized into explicit groups, and the user can choose whether to work at the level of the groups or at the level of the individual players inside them.
 
 ## Getting Started
 
