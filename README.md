@@ -10,6 +10,22 @@
 
 
 
+## Supported Indices
+
+The library currently implements the following indices and attribution measures:
+
+| Index / measure | Single player | Set of players | Cardinality |
+|---|---:|---:|---:|
+| Shapley value | Yes | Yes | No |
+| Banzhaf value | Yes | Yes | No |
+| Owen value | Yes | Yes | No |
+| Upsilon value | No | No | Yes |
+| Counterfactual value | Yes | Yes | No |
+| Cardinality counterfactual value | No | No | Yes |
+
+> [!NOTE]
+> For sets of players, the library treats each set or group as one player. The returned values are defined at the level chosen by the user through the structure of `players`. `owen_value` is the special case where players are organized into explicit groups, and the user can choose whether to work at the level of the groups or at the level of the individual players inside them.
+
 ## Getting Started
 
 Create and activate a virtual environment:
