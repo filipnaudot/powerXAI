@@ -40,8 +40,8 @@ class DiseaseClassificationModel:
     n_classes : int
         Number of classes (4)
     """
-    FEATURE_NAMES = ['fever', 'cough', 'headache', 'muscle_ache', 'sore_throat', 'fatigue']
-    CLASS_NAMES = ['flu', 'cold', 'covid', 'healthy']
+    FEATURE_NAMES = ['Fever', 'Cough', 'Headache', 'Muscle ache', 'Sore throat', 'Fatigue']
+    CLASS_NAMES = ['Flu', 'Cold', 'Covid', 'Healthy']
     NUM_FEATURES = len(FEATURE_NAMES)
     NUM_CLASSES = len(CLASS_NAMES)
     
