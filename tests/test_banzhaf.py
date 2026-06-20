@@ -102,7 +102,7 @@ def test_cardinality_banzhaf_static_measure():
 
 def test_cardinality_banzhaf_cardinality_measure():
     players = ["A", "B", "C"]
-    expected = [1.5, -1.5, 0.0]
+    expected = [0.75, -1.5, 0.0]
     result = [
         cardinality_banzhaf_value(cardinality=i, players=players, value_function=cardinality_value)
         for i in range(1, len(players)+1)
@@ -111,13 +111,8 @@ def test_cardinality_banzhaf_cardinality_measure():
 
 
 def test_cardinality_banzhaf_single_player_with_cardinality_measure():
-    """
-    The cardinality definition gives zero weight to the grand coalition (grand coalition has size n): comb(n - 1, n) = 0.
-    For a single-player game, the only coalition containing any players is the grand coalition,
-    so all single-player games will have cardinality-Banzhaf value of 0 regardless of the value function.
-    """
     players = ["A"]
-    expected = [0.0]
+    expected = [1.0]
     result = [
         cardinality_banzhaf_value(cardinality=i, players=players, value_function=cardinality_value)
         for i in range(1, len(players)+1)

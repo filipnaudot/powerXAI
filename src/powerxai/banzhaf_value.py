@@ -1,7 +1,7 @@
-from functools import cache
 from math import comb
 from powerxai.types import Callable, Any
 from powerxai.coalitions import coalitions
+from powerxai.upsilon_value import upsilon_value
 
 
 
@@ -50,11 +50,6 @@ def banzhaf_value(player_index: int,
 # CARDINALITY
 #################
 
-@cache
-def _cardinality_banzhaf_weight(cardinality: int, num_players: int) -> float:
-    return (1 / comb(num_players, cardinality) * num_players * comb(num_players - 1, cardinality) / 2**(num_players - 1))
-
-
 def cardinality_banzhaf_value(cardinality: int,
                               players: list[Any],
                               value_function: Callable[[list[Any], set[int]], float]
@@ -62,9 +57,9 @@ def cardinality_banzhaf_value(cardinality: int,
     """
     Compute the cardinality-based Banzhaf value for a given cardinality.
 
-    The cardinality-based Banzhaf value compares the total value of coalitions
+    The cardinality-based Banzhaf value compares the average value of coalitions
     with size c against coalitions with size c - 1, using the Banzhaf correction
-    for each cardinality layer.
+    for the specified cardinality.
 
     Args:
         cardinality (int): Cardinality indicating the layer difference (1 <= c <= n).
@@ -77,11 +72,5 @@ def cardinality_banzhaf_value(cardinality: int,
     """
     num_players = len(players)
     assert 1 <= cardinality <= num_players, f"cardinality must be in [1, {num_players}]"
-    all_player_indices = set(range(num_players))
-
-    total_value = 0.0
-    for coalition in coalitions(all_player_indices, cardinality=cardinality):
-        total_value += value_function(players, coalition) * _cardinality_banzhaf_weight(cardinality, num_players)
-    for coalition in coalitions(all_player_indices, cardinality=cardinality - 1):
-        total_value -= value_function(players, coalition) * _cardinality_banzhaf_weight(cardinality - 1, num_players)
-    return total_value
+    return ((num_players * comb(num_players - 1, cardinality - 1) / 2**(num_players - 1)) * 
+            upsilon_value(cardinality, players, value_function))
