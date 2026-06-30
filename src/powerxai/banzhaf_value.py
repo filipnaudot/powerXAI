@@ -1,5 +1,7 @@
+from math import comb
 from powerxai.types import Callable, Any
 from powerxai.coalitions import coalitions
+from powerxai.upsilon_value import upsilon_value
 
 
 
@@ -39,3 +41,36 @@ def banzhaf_value(player_index: int,
     
     if probabilistic: return total_marginal / (2**(num_players - 1))
     return total_marginal
+
+
+
+
+
+#################
+# CARDINALITY
+#################
+
+def cardinality_banzhaf_value(cardinality: int,
+                              players: list[Any],
+                              value_function: Callable[[list[Any], set[int]], float]
+                              ) -> float:
+    """
+    Compute the cardinality-based Banzhaf value for a given cardinality.
+
+    The cardinality-based Banzhaf value compares the average value of coalitions
+    with size c against coalitions with size c - 1, using the Banzhaf correction
+    for the specified cardinality.
+
+    Args:
+        cardinality (int): Cardinality indicating the layer difference (1 <= c <= n).
+        players (list[Any]): list of players or elements in the reference set.
+        value_function (Callable[[list[Any], set[int]], float]):
+            A function that returns the value of any coalition (based on the player indices).
+
+    Returns:
+        float: The cardinality-based Banzhaf value for the specified cardinality.
+    """
+    num_players = len(players)
+    assert 1 <= cardinality <= num_players, f"cardinality must be in [1, {num_players}]"
+    return ((num_players * comb(num_players - 1, cardinality - 1) / 2**(num_players - 1)) * 
+            upsilon_value(cardinality, players, value_function))

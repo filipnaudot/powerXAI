@@ -16,6 +16,16 @@ def test_cardinality_measure():
     assert result == expected
 
 
+def test_cardinality_measure_single_player():    
+    players = ["A"]
+    expected = [1.0]
+    result = [
+        upsilon_value(cardinality=i, players=players, value_function=cardinality_value)
+        for i in range(1, len(players)+1)
+    ]
+    assert result == expected
+
+
 def test_static_measure():
     players = ["A", "B", "C"]
     expected = [0.0, 0.0, 0.0]

@@ -1,5 +1,8 @@
-from powerxai.banzhaf_value import banzhaf_value
+from powerxai.banzhaf_value import banzhaf_value, cardinality_banzhaf_value
 from .value_functions import (
+    always_return_one_as_value,
+    always_return_zero_as_value,
+    cardinality_value,
     C_is_valuable_value,
     A_and_C_is_valuable_value,
     majority_value,
@@ -78,5 +81,40 @@ def test_majority_game_probabilistic():
     result = [
         banzhaf_value(i, players, majority_value, probabilistic=True)
         for i in range(len(players))
+    ]
+    assert result == expected
+
+
+
+
+####################
+# CARDINALITY
+####################
+def test_cardinality_banzhaf_static_measure():
+    players = ["A", "B", "C"]
+    expected = [0.00, 0.00, 0.00]
+    result = [
+        cardinality_banzhaf_value(cardinality=i, players=players, value_function=always_return_zero_as_value)
+        for i in range(1, len(players)+1)
+    ]
+    assert result == expected
+
+
+def test_cardinality_banzhaf_cardinality_measure():
+    players = ["A", "B", "C"]
+    expected = [0.75, -1.5, 0.0]
+    result = [
+        cardinality_banzhaf_value(cardinality=i, players=players, value_function=cardinality_value)
+        for i in range(1, len(players)+1)
+    ]
+    assert result == expected
+
+
+def test_cardinality_banzhaf_single_player_with_cardinality_measure():
+    players = ["A"]
+    expected = [1.0]
+    result = [
+        cardinality_banzhaf_value(cardinality=i, players=players, value_function=cardinality_value)
+        for i in range(1, len(players)+1)
     ]
     assert result == expected

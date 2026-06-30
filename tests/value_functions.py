@@ -70,6 +70,20 @@ def always_return_one_as_value(players, coalition) -> float:
     return 1.0
 
 
+def always_return_zero_as_value(players, coalition) -> float:
+    """
+    Value function that always returns 0.0.
+
+    Args:
+        players (List[Any]): List of players or elements in the reference set.
+        coalition (Set[int]): Indices of players whose coalition value is computed.
+
+    Returns:
+        float: 0.0.
+    """
+    return 0.0
+
+
 def cardinality_value(players, coalition) -> float:
     """
     Value function that checks if the cardinality 
