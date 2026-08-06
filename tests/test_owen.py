@@ -1,5 +1,6 @@
-from powerxai.owen_value import owen_value
+from powerxai.owen_value import cardinality_owen_value, owen_value
 from powerxai.shapley_value import shapley_value
+from powerxai.upsilon_value import upsilon_value
 from .value_functions import (
     owen_three_person_game_example,
     owen_four_person_game_example,
@@ -118,3 +119,29 @@ def test_four_person_game_example_2_partition_4():
     ]
     rounded = [round(x, 1) for x in result]
     assert rounded == expected
+
+
+####################
+# CARDINALITY
+####################
+
+
+def test_cardinality_owen_paper_example():
+    players = [["X", "Y"], ["Z"]]
+    value_function = lambda _, coalition: 6.0 if coalition in ({0, 2}, {1, 2}, {0, 1, 2}) else 0.0
+    assert [cardinality_owen_value(c, players, value_function) for c in range(1, 4)] == [0.0, 3.0, 3.0]
+
+
+def test_cardinality_owen_singletons_equals_upsilon():
+    players, flat_players = [["A"], ["B"], ["C"]], ["A", "B", "C"]
+    assert [round(cardinality_owen_value(c, players, owen_three_person_game_example), 10) for c in range(1, 4)] == [upsilon_value(c, flat_players, owen_three_person_game_example) for c in range(1, 4)]
+
+
+def test_cardinality_owen_single_group_equals_upsilon():
+    players, flat_players = [["A", "B", "C"]], ["A", "B", "C"]
+    assert [cardinality_owen_value(c, players, owen_three_person_game_example) for c in range(1, 4)] == [upsilon_value(c, flat_players, owen_three_person_game_example) for c in range(1, 4)]
+
+
+def test_cardinality_owen_efficiency():
+    players = [["A", "B"], ["C"]]
+    assert sum(cardinality_owen_value(c, players, owen_three_person_game_example) for c in range(1, 4)) == 100.0

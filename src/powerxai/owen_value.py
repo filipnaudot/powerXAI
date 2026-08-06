@@ -1,4 +1,5 @@
-from math import factorial
+from math import comb
+from powerxai.coalitions import coalitions
 from powerxai.shapley_value import shapley_weighted_coalitions
 from powerxai.types import Callable, Any
 
@@ -73,3 +74,55 @@ def _get_partition_as_indices(players: list[Any]) -> tuple[list[set[int]], int]:
     for group in players:
         partition_as_indices.append(set(range(current_index, current_index := current_index + len(group))))
     return partition_as_indices, current_index
+
+
+
+
+#################
+# CARDINALITY
+#################
+
+
+def cardinality_owen_value(cardinality: int,
+                           players: list[Any],
+                           value_function: Callable[[list[Any], set[int]], float],
+                           ) -> float:
+    """
+    Compute the cardinality-based Owen value for a given coalition cardinality.
+
+    The Cardinality Owen value measures the average change from coalitions of
+    size c - 1 to size c while respecting the a priori group structure.
+    Whole outside groups may be present, while the joining group contributes its members one at a time.
+
+    Args:
+        cardinality (int): Resulting coalition size c, where 1 <= c <= n.
+        players (list[Any]): A partitioned list of groups of atomic players.
+        value_function (Callable[[list[Any], set[int]], float]):
+            A function that returns the value of a coalition of atomic player indices.
+
+    Returns:
+        float: The Cardinality Owen value for the specified cardinality.
+    """
+    partition_as_indices, num_atomic_players = _get_partition_as_indices(players)
+    assert 1 <= cardinality <= num_atomic_players, (f"cardinality must be in [1, {num_atomic_players}]")
+
+    group_indices = set(range(len(partition_as_indices)))
+    total_value = 0.0
+    for joining_group_index, joining_group in enumerate(partition_as_indices):
+        for outside_group_indices, outside_group_weight in shapley_weighted_coalitions(joining_group_index, group_indices):
+            outside_coalition = {
+                player_index
+                for group_index in outside_group_indices
+                for player_index in partition_as_indices[group_index]
+            }
+            joining_group_cardinality = cardinality - len(outside_coalition)
+            if not (1 <= joining_group_cardinality <= len(joining_group)):
+                continue
+            resulting_coalitions = coalitions(joining_group, joining_group_cardinality)
+            preceding_coalitions = coalitions(joining_group, joining_group_cardinality - 1)
+            average_resulting_value = sum(value_function(players, outside_coalition | coalition) for coalition in resulting_coalitions
+                                          ) / comb(len(joining_group), joining_group_cardinality)
+            average_preceding_value = sum(value_function(players, outside_coalition | coalition) for coalition in preceding_coalitions
+                                          ) / comb(len(joining_group), joining_group_cardinality - 1)
+            total_value += outside_group_weight * (average_resulting_value - average_preceding_value)
+    return total_value
